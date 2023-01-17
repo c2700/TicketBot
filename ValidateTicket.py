@@ -59,7 +59,6 @@ class ValidateTicket:
 
         _ticket_number = self.post_data["number"]
         self.ticket_link = f"https://connxaidev.service-now.com/incident.do?sys_id={self.post_data['sys_id']}"
-        # self.ticket_link = f"https://connxai.service-now.com/incident.do?sys_id={self.post_data['sys_id']}"
 
         self.issue_type_dict = defaultdict(list)
         self.category_dict = defaultdict(list)
@@ -222,7 +221,6 @@ class ValidateTicket:
             self.updated_values["assignment_group"] = "L2_UHD"
         if any(x in sdwan_ai_ops_assignment_ifaces for x in self.iface_list):
             ## sdwan ai ops
-            # self.grp_link = "https://connxai.service-now.com/api/now/table/sys_user_group/195646b6873af4100495b917cebb354d"
             self.updated_values["assignment_group"] = "SDWAN AI OPS"
 
         self.UpdateTicketWorkNotesField()
@@ -239,7 +237,6 @@ class ValidateTicket:
 
     def UpdateTicketRecord(self):
 
-        # ticket_link1 = f"https://connxai.service-now.com/api/now/table/incident/{self.post_data['sys_id']}"
         ticket_link1 = f"https://connxaidev.service-now.com/api/now/table/incident/{self.post_data['sys_id']}"
         _updated_ticket_obj = self.snow_req_session.patch(url=ticket_link1, data=json.dumps(self.updated_values))  ## 200
 

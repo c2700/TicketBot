@@ -40,11 +40,9 @@ def Login():
 
 
 def ticket_validate_func(ticket_obj, snow_client_obj, auth):
-    # ticket_link = f"https://connxai.service-now.com/incident.do?sys_id={ticket_obj['sys_id']}"
     ticket_link = f"https://connxaidev.service-now.com/incident.do?sys_id={ticket_obj['sys_id']}"
 
     ticket_api_link = f"https://connxaidev.service-now.com/api/now/table/incident/{ticket_obj['sys_id']}"
-    # ticket_api_link = f"https://connxai.service-now.com/api/now/table/incident/{ticket_obj['sys_id']}"
 
     parsed_ticket = TicketParser(ticket_obj)
 
@@ -145,7 +143,6 @@ def BotFunc():
             print("ticket requires manual intervention")
             with open("manual_intervention_tickets.txt", "a") as manual_ticket:
                 manual_ticket.write(f"{i['number']} - https://connxaidev.service-now.com/incident.do?sys_id={i['sys_id']}\n")
-                # manual_ticket.write(f"{i['number']} - https://connxai.service-now.com/incident.do?sys_id={i['sys_id']}\n")
         input("continue to next ticket")
 
 
