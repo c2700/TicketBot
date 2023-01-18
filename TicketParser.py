@@ -10,7 +10,6 @@ class ManualInterVentionError(Exception):
 class TicketParser:
     def __init__(self, post_data):
         self.ticket_link = "https://connxaidev.service-now.com/incident.do?sys_id=" + post_data["sys_id"]
-        # self.ticket_link = "https://connxai.service-now.com/incident.do?sys_id=" + post_data["sys_id"]
         self.post_data = post_data
         self.short_desc_list = self.post_data["short_description"].split(" || ")
         self.store_number = self.post_data["short_description"].split(" || ")[0].split()[-1]

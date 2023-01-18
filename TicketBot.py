@@ -1,5 +1,3 @@
-import json
-
 from pysnow import Client, QueryBuilder
 from LogParser import *
 from TicketParser import *
@@ -7,20 +5,18 @@ from ssh_connect import *
 from TicketState import *
 from ValidateTicket import *
 from os import path
-from json import loads, dumps
 
 def Login():
     if not path.exists(".hash"):
-        print("input snow creds")
-
+        print("no stored snow creds found. please input snow creds")
         instance = input("instance: ")
         user = input("user: ")
-        hashword = input("hashword: ")
+        password = input("password: ")
         
         hash_dict = {
             "instance": instance,
             "user": user,
-            "hashword": hashword
+            "password": password
         }
 
         with open(".hash", 'a') as f_obj:
@@ -32,17 +28,14 @@ def Login():
             json_obj = json.load(fp=f_obj)
             instance = json_obj["instance"]
             user = json_obj["user"]
-            hashword = json_obj["hashword"]
+            password = json_obj["password"]
 
-    return instance, user, hashword
+    return instance, user, password
 
 
 
 
 def ticket_validate_func(ticket_obj, snow_client_obj, auth):
-    ticket_link = f"https://connxaidev.service-now.com/incident.do?sys_id={ticket_obj['sys_id']}"
-
-    ticket_api_link = f"https://connxaidev.service-now.com/api/now/table/incident/{ticket_obj['sys_id']}"
 
     parsed_ticket = TicketParser(ticket_obj)
 
@@ -102,24 +95,22 @@ def ticket_validate_func(ticket_obj, snow_client_obj, auth):
         ValidateTicketObj.UpdateTicketWorkNotesField()
     if ticket_action == 1:
         ValidateTicketObj.E_BondTicketValues()
-    updated_fields = ValidateTicketObj.get_updated_ticket_fields
 
     ValidateTicketObj.UpdateTicketRecord()
     ValidateTicketObj.CloseSnowSession()
 
 def BotFunc():
 
-    print("links & ID's of Non Proactive tickets & tickets that cannot be validated will be saved to 'no_proactive.txt', 'unvalidated.txt' respectively\n")
+    print("links & ID's of Non Proactive tickets & tickets that cannot be validated and require manual intervention will be saved to 'no_proactive.txt' and 'manual_intervention_tickets.txt' respectively\n")
 
-    instance, user, hashword = Login()
-    print()
+    instance, user, password = Login()
 
     # L2_UHD = 4, t1, digi-lte, lte
     # sdwan ai ops - pa-1 pa-2
 
     headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
-    snow_client = Client(instance=instance, user=user, password=hashword)
+    snow_client = Client(instance=instance, user=user, password=password)
 
     snow_client.request_params["headers"] = headers
     incident_table = snow_client.resource(api_path="/table/incident")
@@ -127,29 +118,27 @@ def BotFunc():
     # query = QueryBuilder().field("sys_created_by").contains("moogint").AND().\
     query = QueryBuilder().field("sys_created_by").contains("Rohan.Philip").AND().\
             field("short_description").contains("operationally down").AND().\
-            field("incident_state").equals([2])  # .AND().\
-            # field("assigned_to{'value'}").contains("90d9ff531bfdd1908ac45243604bcbd7").AND().\
-
+            field("incident_state").equals([2])
 
     print("pulling all unvalidated 'work in progress' tickets from snow assigned to Rohan Philip")
     ticket_obj_list = incident_table.get(query=query, stream=True).all()
     snow_client.close()
-    print("\npulled all tickets from queue\n\n")
+    print("\npulled all tickets from queue\n")
+
     for i in ticket_obj_list:
+        ticket_link = f"https://connxaidev.service-now.com/incident.do?sys_id={i['sys_id']}"
+        ticket_api_link = f"https://connxaidev.service-now.com/api/now/table/incident/{i['sys_id']}"
         try:
-            snow_client_obj = snow_client.query(table='number', query={'number': i["number"]})
-            ticket_validate_func(ticket_obj=i, snow_client_obj=snow_client_obj, auth=(user, hashword))
+            snow_client_obj = snow_client.query(table='incident', query={'number': i["number"]})
+            ticket_validate_func(ticket_obj=i, snow_client_obj=snow_client_obj, auth=(user, password))
         except ManualInterVentionError:
             print("ticket requires manual intervention")
             with open("manual_intervention_tickets.txt", "a") as manual_ticket:
-                manual_ticket.write(f"{i['number']} - https://connxaidev.service-now.com/incident.do?sys_id={i['sys_id']}\n")
-        input("continue to next ticket")
+                manual_ticket.write(f"{i['number']} - {ticket_link}\n")
 
 
 
 
 
-# TODO: 1) lte ticket values
-# TODO: 2) should iface 3 be dealt with through this bot?
-# TODO: 3) tickets with multiple ifaces like ticket with store #4283 (new change to bot)
-# TODO: 4) run this process as a daemon
+
+

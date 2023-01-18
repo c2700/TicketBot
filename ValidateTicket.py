@@ -193,18 +193,11 @@ class ValidateTicket:
         self.post_data["state"] = "6"
         self.post_data["work_notes"] = self.work_notes
         self.post_data["close_notes"] = self.work_notes
+        self.post_data["close_code"] = "Alert"
 
         self.updated_field_list += ["state"]
         self.updated_field_list += ["work_notes"]
         self.updated_field_list += ["close_notes"]
-
-        try:
-            self.post_data["close_code"] = "Alert"
-        except:
-            self.post_data["close_code"] = "Auto-Resolve"
-        else:
-            self.post_data["close_code"] = "False-Alarm"
-
         self.updated_field_list += ["close_code"]
         print(f"{self.post_data['number'] - self.post_data['work_notes']}")
 
@@ -272,3 +265,6 @@ class ValidateTicket:
     def get_updated_ticket_fields(self):
         return self.updated_values
 
+    @property
+    def get_close_code(self):
+        return self.updated_values["close_code"]
