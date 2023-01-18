@@ -2,6 +2,8 @@
 .hash
 .idea
 .ssh_info
+validated.txt
+manual_intervention_tickets.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
