@@ -1,6 +1,8 @@
 # TicketBot
 ### Bot to validate proactive tickets
 
+##### (The script can still be run but only for said conditions)
+
 ## working:
 1. pull all proactive tickets that have "operationally down interface" from snow user's queue
 2. parse each pulled ticket and create a mapped data struct of "router name", "node name", respective "interface name" & "interface states"
