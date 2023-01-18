@@ -5,6 +5,7 @@ from ssh_connect import *
 from TicketState import *
 from ValidateTicket import *
 from os import path
+import re
 
 def Login():
     if not path.exists(".hash"):
@@ -103,6 +104,9 @@ def BotFunc():
 
     print("links & ID's of Non Proactive tickets & tickets that cannot be validated and require manual intervention will be saved to 'no_proactive.txt' and 'manual_intervention_tickets.txt' respectively\n")
 
+    if not path.exists(".ssh_info"):
+        print("\".ssh_info\" file not found. cannot validate tickets without it as it contains pod numbers mapped to it's respective IP's")
+        exit(1)
     instance, user, password = Login()
 
     # L2_UHD = 4, t1, digi-lte, lte
@@ -115,8 +119,14 @@ def BotFunc():
     snow_client.request_params["headers"] = headers
     incident_table = snow_client.resource(api_path="/table/incident")
 
+    user_fname_first_char = re.search("\w+\.", user).group()[0].swapcase()
+    user_lname_first_char = re.search("\.\w+", user).group()[1].swapcase()
+
+    filter_user = re.sub("^" + user_fname_first_char.swapcase(), user_fname_first_char, user)
+    filter_user = re.sub("\." + user_lname_first_char.swapcase(), "." + user_lname_first_char, filter_user)
+
     # query = QueryBuilder().field("sys_created_by").contains("moogint").AND().\
-    query = QueryBuilder().field("sys_created_by").contains("Rohan.Philip").AND().\
+    query = QueryBuilder().field("sys_created_by").contains(filter_user).AND().\
             field("short_description").contains("operationally down").AND().\
             field("incident_state").equals([2])
 
