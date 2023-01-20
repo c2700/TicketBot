@@ -2,8 +2,9 @@
 .hash
 .idea
 .ssh_info
-validated.txt
-manual_intervention_tickets.txt
+.validated.txt
+manual_tickets.txt
+reactive.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
