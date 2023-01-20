@@ -102,7 +102,7 @@ def ticket_validate_func(ticket_obj, snow_client_obj, auth):
 
 def BotFunc():
 
-    print("links & ID's of Non Proactive tickets & tickets that cannot be validated and require manual intervention will be saved to 'no_proactive.txt' and 'manual_intervention_tickets.txt' respectively\n")
+    print("links & ID's of Non Proactive tickets & tickets that cannot be validated and require manual intervention will be saved to 'no_proactive.txt' and 'manual_tickets.txt' respectively\n")
 
     if not path.exists(".ssh_info"):
         print("\".ssh_info\" file not found. cannot validate tickets without it as it contains pod numbers mapped to it's respective IP's")
@@ -143,7 +143,7 @@ def BotFunc():
             ticket_validate_func(ticket_obj=i, snow_client_obj=snow_client_obj, auth=(user, password))
         except ManualInterVentionError:
             print("ticket requires manual intervention")
-            with open("manual_intervention_tickets.txt", "a") as manual_ticket:
+            with open("manual_tickets.txt", "a") as manual_ticket:
                 manual_ticket.write(f"{i['number']} - {ticket_link}\n")
 
 
