@@ -2,6 +2,12 @@ import re
 
 class LogParser:
     def __init__(self, dev_log_data, cmd_string):
+        '''
+        logs will be used to extract node_name, iface, iface_state and generate the necessarry data & data structs
+        :param dev_log_data: logs pulled from ssh connections
+        :param cmd_string: command used to pull the data
+        '''
+
         self.dev_log_data = dev_log_data
         self.cmd_string = cmd_string
 
@@ -65,6 +71,11 @@ class LogParser:
             "lte": "lte",
         }
 
+
+        '''
+        function that generates data struct from peer path log containing node_name & it's respective peer_iface_name, 
+        peer_iface_name state and a list and count of unavailable, up, down, unavailable & init state peers
+        '''
         def get_peer():
             for i in self.dev_log_data:
                 if re.search(".*- admin up oper up prov up", i):
@@ -119,7 +130,14 @@ class LogParser:
                         del_elem_index = self.pseudo_down_iface_list.index(i)
                         del self.pseudo_down_iface_list[del_elem_index]
             del _
+        '''
+        end of data struct generation func
+        '''
 
+        '''
+        if command is "show peers" then call "get_peer()"
+        if command is "device-interface" then call "get_peer()" 1st and then shorten the "show device-interface" logs
+        '''
         if self.cmd_string == "peers":
             get_peer()
         elif self.cmd_string == "device-interface":
@@ -132,6 +150,9 @@ class LogParser:
                         state = _[j-1]
                         self.tunnel_state_dict[_[0]] = {state_type: state}
                     del _
+        '''
+        end of data struct generation
+        '''
 
     @property
     def get_show_peers_data(self):

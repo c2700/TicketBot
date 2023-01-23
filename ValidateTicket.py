@@ -13,6 +13,15 @@ class UnvalidatedTicketError(Exception):
 
 class ValidateTicket:
     def __init__(self, post_data, dev_log, iface_state_list, snow_client_obj, auth):
+        '''
+        Set Ticket Values based on parsed Device logs
+        :param post_data: extracted ticket_object
+        :param dev_log: parsed device log
+        :param iface_state_list: dict of ticket_iface-ticket_state -> eg:  {"ticket_iface_name": "ticket_state"}
+        :param snow_client_obj: the snow client session object created by the PySnow.Client instance
+        :param auth: snow user auth
+        '''
+
         self.grp_link = None
         self.grp_sys_id_value = None
         self.assign_grp_name = None
@@ -52,17 +61,19 @@ class ValidateTicket:
         self.updated_field_list = []
         self.updated_values = {}
 
+        '''
+        default values set for below fields
+        '''
         self.updated_values["contact_type"] = "monitoring_tool"
         self.updated_values["u_service_type"] = "sdwan_customer"
         self.updated_values["category"] = "transport"
         self.updated_values["u_issue_start_date_time"] = datetime.now(timezone("US/Eastern")).strftime("%F %T")
+        '''
+        end of default values
+        '''
 
         _ticket_number = self.post_data["number"]
         self.ticket_link = f"https://connxaidev.service-now.com/incident.do?sys_id={self.post_data['sys_id']}"
-
-        self.issue_type_dict = defaultdict(list)
-        self.category_dict = defaultdict(list)
-        self.subcategory_dict = defaultdict(list)
 
         _dev_data = str.join("\n", self.dev_data)
         self.work_notes = f"Hi Team,\n\nstore #{self.store_number}\n\nPlease find the logs attached below:\n\n{_dev_data}\n\n"
@@ -74,13 +85,20 @@ class ValidateTicket:
         def return_k_v_pair(key_list, value):
             return {**dict.fromkeys([str.join(", ", i) for i in permutations(key_list)], value)}
 
+        '''
+        dictionary of list of permutations & combinations of device ifaces mapped to it's field values
+        '''
+        self.issue_type_dict = defaultdict(list)
+        self.subcategory_dict = defaultdict(list)
+        # self.category_dict = defaultdict(list)
+
         self.subcategory_dict = {
                             "4": "broadband",
                             "digi-lte": "digi",
                             "lte": "lte",
                             "t1": "mpls t1",
                             # "3": "",
-                            **dict.fromkeys(["pa-1", "pa-2"], "palo_alto"),
+                            **dict.fromkeys(["pa-1", "pa-2"], "palo alto"),
                             **dict.fromkeys([str.join(", ", i) for i in permutations(["pa-1", "pa-2"])], "palo alto"),
                             **dict.fromkeys([str.join(", ", i) for i in permutations(["lte", "t1"])], "t1 & lte"),
                             **dict.fromkeys([str.join(", ", i) for i in permutations(["digi-lte", "t1"])], "t1 & lte"),
@@ -107,6 +125,11 @@ class ValidateTicket:
         self.issue_type_dict.update({"digi-lte": "Others"})
 
 
+        '''
+        dict of field values created from permutations and combinations of ifaces and it's respective "to-be-assgined"
+        values 
+        '''
+        ## TODO: shorten this block of code
         _temp_iface_list = []
         _temp_iface_list.extend([str.join(", ", i) for i in combinations(["4", "t1", "digi-lte"], 2)])
         self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Both Down")})
@@ -159,35 +182,53 @@ class ValidateTicket:
         _temp_iface_list.extend([str.join(", ", i) for i in permutations(["3", "t1"])])
         self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
 
-        #### block to show "tunnel down" if iface is up
+        '''
+        END OF PERMUTATION & COMBINATION
+        '''
+
+
+        # store iface_list as a throw away iterable
         _ = self.iface_list
         for i in _:
             for j in _:
                 if i == j:
                     continue
+
+                ### check if "i" is a tunnel and "j" is the iface used by the tunnel "i"
                 if (i in self.tunnel_iface_dict) and (j in list(self.iface_dict.values())) and (j in self.tunnel_iface_dict[i]):
+
+                    ### if tunnel "i" and iface "j" are operationally down then delete the tunnel "i" from iface_list
                     if (self.iface_state_list[i] == "operationally down") and (self.iface_state_list[j] == "operationally down"):
                         tunnel_index = self.iface_list.index(i)
                         del self.iface_list[tunnel_index]
+
+                    ### if tunnel "i" is operationally up and iface "j" is operationally down then delete the iface "j" from iface_list
                     if (self.iface_state_list[i] == "operationally down") and (self.iface_state_list[j] == "operationally up"):
                         iface_index = self.iface_list.index(i)
                         del self.iface_list[iface_index]
+        ## store iface_list as a throw away string var that will be used as a "dict key" to access values from "category" & "subcategory" dict.s
         _ = str.join(", ", self.iface_list)
 
+        ## use above throw away "dict key" to set the values for the below fields
         self.updated_values["subcategory"] = self.subcategory_dict[_]
         self.updated_values["u_issue_type"] = self.issue_type_dict[_]
 
+
+    '''
+    setting values to ticket when resolving ticket
+    '''
     def UpdateTicketWorkNotesField(self):
-        _ = str.join(', ', self.iface_list)
+        _ = str.join(', ', self.iface_list)  # this var is used in the print statement below
         print(f"Updated ticket work notes with \"{_} peer path\" logs")
-
         self.updated_values["work_notes"] = self.work_notes
-
         self.updated_field_list += ["work_notes"]
 
 
+    '''
+    setting values to ticket when resolving ticket
+    '''
     def ResolveTicketValues(self):
-        _ = str.join(', ', self.iface_list)
+        _ = str.join(', ', self.iface_list)  # this var is used in the print statement below
         self.work_notes += f"Closing this ticket as interface \"{_} is operationally up\""
 
         self.post_data["state"] = "6"
@@ -202,11 +243,15 @@ class ValidateTicket:
         print(f"{self.post_data['number'] - self.post_data['work_notes']}")
 
 
+    '''
+    setting values to ticket when resolving ticket
+    '''
     def E_BondTicketValues(self):
         # test env L2_UHD values
         l2_uhd_assignment_ifaces = ["4", "t1", "lte", "digi-lte"]
         sdwan_ai_ops_assignment_ifaces = ["pa-1", "pa-2"]
 
+        ## check if iface_list is in l2_uhd or sdwan_ai_ops assignment list & set the "assignment_group" field value accordingly
         if (any(x in l2_uhd_assignment_ifaces for x in self.iface_list)) or \
                 (any(x in l2_uhd_assignment_ifaces for x in self.iface_list) and any(x in sdwan_ai_ops_assignment_ifaces for x in self.iface_list)):
             #### L2_UHD
@@ -216,10 +261,7 @@ class ValidateTicket:
             ## sdwan ai ops
             self.updated_values["assignment_group"] = "SDWAN AI OPS"
 
-        self.UpdateTicketWorkNotesField()
-
-        self.updated_field_list += ["assign_grp"]
-
+        ## block that appends iface state to work_notes using throw away var
         _ = []
         self.work_notes += f"Assigning this ticket to {self.assign_grp_name} as "
         for i in self.iface_list:
@@ -227,24 +269,40 @@ class ValidateTicket:
         self.work_notes += str.join(", ", _)
         del _
 
+        ## update the work_notes with the logs
+        self.UpdateTicketWorkNotesField()
 
+        ## adding work_notes to list of updated fields
+        self.updated_field_list += ["assign_grp"]
+
+    '''
+    PATCH'ing SNOW ticket object
+    '''
     def UpdateTicketRecord(self):
-
+        ## update ticket fields using patch call
         ticket_link1 = f"https://connxaidev.service-now.com/api/now/table/incident/{self.post_data['sys_id']}"
-        _updated_ticket_obj = self.snow_req_session.patch(url=ticket_link1, data=json.dumps(self.updated_values))  ## 200
+        _updated_ticket_obj = self.snow_req_session.patch(url=ticket_link1, data=json.dumps(self.updated_values))
 
         if _updated_ticket_obj.status_code == 200:
             with open("validated_tickets.txt", 'a') as validated_tickets_file:
                 validated_tickets_file.write(f"{self.post_data['number']} - {self.ticket_link}\n")
 
+
+    '''
+    closing the connection to SNOW instance
+    '''
     def CloseSnowSession(self):
         self.snow_req_session.close()
 
 
+    ## TODO
     def VendorIDWaiting(self):
         pass
 
 
+    '''
+    returns fields of updated values
+    '''
     @property
     def get_updated_field_values(self):
         _ = {}
@@ -253,18 +311,30 @@ class ValidateTicket:
         return _
 
 
+    '''
+    returns assignment_group values after updating ticket object
+    '''
     @property
     def get_assignment_group(self):
         return self.assign_grp_name, self.grp_link, self.grp_sys_id_value
 
+    '''
+    return ticket state
+    '''
     @property
     def get_state(self):
         return self.post_data["state"]
 
+    '''
+    return upadted ticket values
+    '''
     @property
     def get_updated_ticket_fields(self):
         return self.updated_values
 
+    '''
+    return close code (if any)
+    '''
     @property
     def get_close_code(self):
         return self.updated_values["close_code"]

@@ -1,6 +1,14 @@
 class TicketState:
     def __init__(self, node_list, ticket_log_dict, dev_log, cmd_string):
 
+        '''
+        Set Ticket State based on parsed device logs
+        :param node_list: list of nodes
+        :param ticket_log_dict: nested dict of node, iface, & iface_state. eg -> {"node_name": {"iface": "iface_state"}}
+        :param dev_log: parsed device log
+        :param cmd_string: command used
+        '''
+
         self.node_list = list(node_list)
         self.ticket_log_dict = ticket_log_dict
         self.cmd_string = cmd_string
@@ -27,6 +35,8 @@ class TicketState:
             "pa-2": "pa-2-intf"
         }
 
+
+        #### for future use. don't bother with this just yet
         # self.peer_iface_dict = {
         #     "4": "DIA",
         #     "lte": "lte",
@@ -39,13 +49,14 @@ class TicketState:
         #     "pa-2": ["lte", "digi", "digi-lte"]
         # }
 
+
+        '''dictionary to set & show ticket state'''
         self.ticket_action = 0
         self.ticket_action_dict = {0: "close", 1: "e-bond", 2: "update ticket content"}
 
         self.iface_list = []
         for i in self.node_list:
             self.iface_list += list(self.ticket_log_dict[i].keys())
-
 
         for i in self.dev_log:
             node_name = i.split()[3]
@@ -58,6 +69,7 @@ class TicketState:
             elif (peer_state == "down") or (peer_state == "unavailable") or (peer_state == "init"):
                 self.e_bond_logs += [i]
 
+        '''if number of up peers or more than number of "not-up" peers then ebond the ticket'''
         if self.e_bond_logs.__len__() >= (self.dev_log.__len__() - 1):
             self.ticket_action = 1
         else:
