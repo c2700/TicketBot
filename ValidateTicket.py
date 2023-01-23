@@ -26,9 +26,9 @@ class ValidateTicket:
         self.grp_sys_id_value = None
         self.assign_grp_name = None
         self.snow_client_obj = snow_client_obj
-
-        self.snow_req_session = requests.Session()
-        self.snow_req_session.auth = auth
+        self.auth = auth
+        # self.snow_req_session = requests.Session()
+        # self.snow_req_session.auth = auth
 
         self.iface_dict = {
             "mpls-t1": "t1",
@@ -129,62 +129,33 @@ class ValidateTicket:
         dict of field values created from permutations and combinations of ifaces and it's respective "to-be-assgined"
         values 
         '''
-        ## TODO: shorten this block of code
         _temp_iface_list = []
-        _temp_iface_list.extend([str.join(", ", i) for i in combinations(["4", "t1", "digi-lte"], 2)])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Both Down")})
+        _ = [["4", "t1", "digi-lte"],
+            ["pa-1", "t1", "lte"],
+            ["pa-1", "t1", "digi-lte"],
+            ["t1", "pa-1", "pa-2"],
+            ["4", "t1", "lte"]]
 
-        _temp_iface_list.extend([str.join(", ", i) for i in combinations(["pa-1", "t1", "lte"], 2)])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Both Down")})
+        for i in _:
+            _temp_iface_list.extend([str.join(", ", i) for i in combinations(i, 2)])
+            self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Both Down")})
 
-        _temp_iface_list.extend([str.join(", ", i) for i in combinations(["pa-1", "t1", "digi-lte"], 2)])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Both Down")})
+        _ = [["4", "pa-2"],
+             ["3", "t1"],
+             ["4", "t1", "lte"],
+             ["4", "t1", "digi-lte"],
+             ["pa-1", "t1", "lte"],
+             ["pa-1", "t1", "digi-lte"],
+             ["t1", "pa-1", "pa-2"],
+             ["3", "4", "digi-lte", "t1"],
+             ["3", "4", "lte", "t1"],
+             ["3", "4", "digi-lte"],
+             ["3", "4", "lte"],
+             ["3", "4", "t1"]]
 
-        _temp_iface_list.extend([str.join(", ", i) for i in combinations(["t1", "pa-1", "pa-2"], 2)])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Both Down")})
-
-        _temp_iface_list.extend([str.join(", ", i) for i in combinations(["4", "t1", "lte"], 2)])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Both Down")})
-
-        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["4", "t1", "lte"])])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
-
-        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["4", "t1", "digi-lte"])])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
-
-        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["pa-1", "t1", "lte"])])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
-
-        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["pa-1", "t1", "digi-lte"])])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
-
-        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["t1", "pa-1", "pa-2"])])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
-
-        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["4", "pa-2"])])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
-
-        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["3", "4", "digi-lte", "t1"])])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
-
-        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["3", "4", "lte", "t1"])])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
-
-        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["3", "4", "digi-lte"])])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
-
-        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["3", "4", "lte"])])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
-
-        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["3", "4", "t1"])])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
-
-        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["3", "t1"])])
-        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
-
-        '''
-        END OF PERMUTATION & COMBINATION
-        '''
+        for i in _:
+            _temp_iface_list.extend([str.join(", ", i) for i in permutations(i, 2)])
+            self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
 
 
         # store iface_list as a throw away iterable
@@ -281,7 +252,9 @@ class ValidateTicket:
     def UpdateTicketRecord(self):
         ## update ticket fields using patch call
         ticket_link1 = f"https://connxaidev.service-now.com/api/now/table/incident/{self.post_data['sys_id']}"
-        _updated_ticket_obj = self.snow_req_session.patch(url=ticket_link1, data=json.dumps(self.updated_values))
+        # _updated_ticket_obj = self.snow_req_session.patch(url=ticket_link1, data=json.dumps(self.updated_values))
+        _updated_ticket_obj = requests.put(url=ticket_link1, data=json.dumps(self.updated_values), auth=self.auth)
+        _updated_ticket_obj.close()
 
         if _updated_ticket_obj.status_code == 200:
             with open("validated_tickets.txt", 'a') as validated_tickets_file:
@@ -291,8 +264,8 @@ class ValidateTicket:
     '''
     closing the connection to SNOW instance
     '''
-    def CloseSnowSession(self):
-        self.snow_req_session.close()
+    # def CloseSnowSession(self):
+    #     self.snow_req_session.close()
 
 
     ## TODO

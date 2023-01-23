@@ -146,7 +146,7 @@ def ticket_validate_func(ticket_obj, snow_client_obj, auth):
         ValidateTicketObj.E_BondTicketValues()
 
     '''
-    send updated ticket object values to the ticket object location using through PATCH call
+    PATCH ticket object location using updated ticket object fields
     '''
     ValidateTicketObj.UpdateTicketRecord()
 
