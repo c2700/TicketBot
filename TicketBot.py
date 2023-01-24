@@ -244,10 +244,3 @@ def BotFunc():
             print("ticket requires manual intervention")
             with open("manual_tickets.txt", "a") as manual_ticket:
                 manual_ticket.write(f"{i['number']} - {ticket_link}\n")
-
-
-
-
-
-
-
