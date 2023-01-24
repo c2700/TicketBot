@@ -10,7 +10,7 @@ class SSHConn:
         :param pod_num: Pod number to SSH into
         :param router_name: router name
         :param node_iface_state_dict: dict of node, "iface in ticket" & "iface state in ticket".
-                                                eg -> {'node': {'ticket iface name': 'ticket iface_state'}}
+                                      eg -> {'node': {'ticket iface name': 'ticket iface_state'}}
         '''
 
         self.subcmd = ""
@@ -88,9 +88,11 @@ class SSHConn:
         with open(".ssh_info", 'r') as f_obj:
             self.pod_ip_dict = json.load(fp=f_obj)
 
-        self.passwd = self.pod_ip_dict["placeholder"]
-        if self.pod_num == "9":
-            self.passwd = self.pod_ip_dict["it_is_free"]
+        with open(".shadow_info", 'r') as f_obj:
+            _ = json.load(fp=f_obj)
+            self.passwd = _["red store"]
+            if self.pod_num == "9":
+                self.passwd = _(fp=f_obj)["blue store"]
 
 
         self.sshclient = SSHClient()
@@ -118,7 +120,7 @@ class SSHConn:
 
 
     '''
-    this method is so that it's easier to close all ssh session's I/O stream that belongs to instance of this class
+    this method is so that it's easier to close all ssh session's I/O stream that belongs to the instance of this class
     '''
     def close_conn(self):
         self.stdin.close()

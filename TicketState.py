@@ -76,6 +76,10 @@ class TicketState:
             self.ticket_action = 2
 
 
+    '''
+    getters section
+    '''
+
     @property
     def get_ebond_logs(self):
         return self.e_bond_logs

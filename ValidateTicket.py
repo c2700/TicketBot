@@ -131,35 +131,61 @@ class ValidateTicket:
         '''
         _temp_iface_list = []
         _ = [["4", "t1", "digi-lte"],
-            ["pa-1", "t1", "lte"],
-            ["pa-1", "t1", "digi-lte"],
-            ["t1", "pa-1", "pa-2"],
-            ["4", "t1", "lte"]]
+             ["pa-1", "t1", "lte"],
+             ["pa-1", "t1", "digi-lte"],
+             ["t1", "pa-1", "pa-2"],
+             ["4", "t1", "lte"]]
 
         for i in _:
             _temp_iface_list.extend([str.join(", ", i) for i in combinations(i, 2)])
             self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Both Down")})
 
-        _ = [["4", "pa-2"],
-             ["3", "t1"],
-             ["4", "t1", "lte"],
-             ["4", "t1", "digi-lte"],
-             ["pa-1", "t1", "lte"],
-             ["pa-1", "t1", "digi-lte"],
-             ["t1", "pa-1", "pa-2"],
-             ["3", "4", "digi-lte", "t1"],
-             ["3", "4", "lte", "t1"],
-             ["3", "4", "digi-lte"],
-             ["3", "4", "lte"],
-             ["3", "4", "t1"]]
+        ## TODO: replace "Others" with necessary values wherever necessary
+        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["4", "t1", "lte"])])
+        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
 
-        for i in _:
-            _temp_iface_list.extend([str.join(", ", i) for i in permutations(i, 2)])
-            self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
+        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["4", "t1", "digi-lte"])])
+        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
 
+        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["pa-1", "t1", "lte"])])
+        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
 
-        # store iface_list as a throw away iterable
-        _ = self.iface_list
+        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["pa-1", "t1", "digi-lte"])])
+        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
+
+        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["t1", "pa-1", "pa-2"])])
+        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
+
+        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["4", "pa-2"])])
+        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
+
+        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["3", "4", "digi-lte", "t1"])])
+        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
+
+        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["3", "4", "lte", "t1"])])
+        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
+
+        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["3", "4", "digi-lte"])])
+        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
+
+        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["3", "4", "lte"])])
+        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
+
+        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["3", "4", "t1"])])
+        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
+
+        _temp_iface_list.extend([str.join(", ", i) for i in permutations(["3", "t1"])])
+        self.issue_type_dict.update({**dict.fromkeys(_temp_iface_list, "Others")})
+        ## END of Replace "Others" with necessary values
+
+        _ = self.iface_list  # store iface_list as a throw away iterable
+        '''
+        Delete only down ifaces/tunnels from list if said ifaces/tunnels are up as only "down" ifaces needs to be dealt 
+        with 
+        
+        1) delete "iface" from list if tunnel is down & "iface" used by tunnel is up
+        2) delete "tunnel" from list if "tunnel" & "iface" are down
+        '''
         for i in _:
             for j in _:
                 if i == j:
@@ -177,6 +203,7 @@ class ValidateTicket:
                     if (self.iface_state_list[i] == "operationally down") and (self.iface_state_list[j] == "operationally up"):
                         iface_index = self.iface_list.index(i)
                         del self.iface_list[iface_index]
+
         ## store iface_list as a throw away string var that will be used as a "dict key" to access values from "category" & "subcategory" dict.s
         _ = str.join(", ", self.iface_list)
 
@@ -186,7 +213,7 @@ class ValidateTicket:
 
 
     '''
-    setting values to ticket when resolving ticket
+    setting ticket work notes
     '''
     def UpdateTicketWorkNotesField(self):
         _ = str.join(', ', self.iface_list)  # this var is used in the print statement below
@@ -215,7 +242,7 @@ class ValidateTicket:
 
 
     '''
-    setting values to ticket when resolving ticket
+    setting values to ticket when e-bonding ticket
     '''
     def E_BondTicketValues(self):
         # test env L2_UHD values
@@ -272,6 +299,10 @@ class ValidateTicket:
     def VendorIDWaiting(self):
         pass
 
+
+    '''
+    getters section
+    '''
 
     '''
     returns fields of updated values

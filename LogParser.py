@@ -136,7 +136,7 @@ class LogParser:
 
         '''
         if command is "show peers" then call "get_peer()"
-        if command is "device-interface" then call "get_peer()" 1st and then shorten the "show device-interface" logs
+        if command is "show device-interface" then call "get_peer()" 1st and then shorten the "show device-interface" logs
         '''
         if self.cmd_string == "peers":
             get_peer()
@@ -153,6 +153,12 @@ class LogParser:
         '''
         end of data struct generation
         '''
+
+
+
+    '''
+    getters section
+    '''
 
     @property
     def get_show_peers_data(self):
@@ -213,4 +219,3 @@ class LogParser:
     @property
     def get_init_peers_count(self):
         return self.init_peers_count
-

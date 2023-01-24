@@ -10,40 +10,76 @@ import re
 def Login():
     if not path.exists(".hash"):
         print("no stored snow creds found. please input snow creds")
-        instance = input("instance: ")
-        user = input("user: ")
-        password = input("password: ")
-        cred_grp = input("enter cred group: ")
+        _instance = input("instance: ")
+        _user = input("user: ")
+        _password = input("password: ")
 
-        hash_dict = {
-            cred_grp: [
-                {
-                    "instance": instance,
-                    "user": user,
-                    "password": password
-                }
-            ]
+        _hash_dict = {
+            "instance": _instance,
+            "user": _user,
+            "password": _password
         }
 
-        with open(".hash", 'a') as f_obj:
-            json_dict = json.loads(json.dumps(hash_dict))
-            json.dump(obj=json_dict, fp=f_obj, indent=4)
+        with open(".hash", 'w') as _f_obj:
+            json_dict = json.loads(json.dumps(_hash_dict))
+            json.dump(obj=json_dict, fp=_f_obj, indent=4)
 
     elif path.exists(".hash"):
-        with open(".hash", "r") as f_obj:
-            json_obj = json.load(fp=f_obj)
-            json_obj = json_obj["cred1"][0]
-            instance = json_obj["instance"]
-            user = json_obj["user"]
-            password = json_obj["password"]
+        with open(".hash", "r") as _f_obj:
+            _json_obj = json.load(fp=_f_obj)
+            _instance = _json_obj["instance"]
+            _user = _json_obj["user"]
+            _password = _json_obj["password"]
 
-    return instance, user, password
+    return _instance, _user, _password
+
+
+def router_login_file():
+    _bleh = {}
+    _rand = [str(i) for i in range(1, 7)]
+    _rand += ["9"]
+
+    for i in _rand:
+        _bleh[str(i)] = input(f"POD {i} address: ")
+    _ = {}
+
+    def create(pos, num, sub_num):
+        _temp = []
+        for i in _rand:
+            _temp += [re.sub(i, f"{i}{pos}", i)]
+        for i, j in zip(_temp, list(_bleh.values())):
+            j = j.split(".")
+            j[1] = j[1].replace(f"{num}", f"{sub_num}")
+            j = str.join(".", j)
+            # j = j.split(".")[1].replace(f"{num}", f"{sub_num}")
+            _[i] = j
+        return _
+
+    if _bleh["1"].split(".")[1] == "130":
+        _temp = [create("A", "130", "130"), create("B", "130", "100")]
+        for i in _temp:
+            _bleh.update(i)
+
+    elif _bleh["1"].split(".")[1] == "100":
+        _temp = [create("A", "100", "130"), create("B", "100", "100")]
+        for i in _temp:
+            _bleh.update(i)
+
+    with open('.ssh_info', 'w') as _ssh_info:
+        json.dump(obj=json.loads(json.dumps(_bleh)), fp=_ssh_info, indent=4)
+
+
+    _bleh = {}
+    print("Enter passwords")
+    _bleh["red store"] = input("red store: ")
+    _bleh["blue store"] = input("blue store: ")
+    with open('.shadow_info', 'w') as _shadow_info:
+        json.dump(obj=json.loads(json.dumps(_bleh)), fp=_shadow_info, indent=4)
 
 
 
 
 def ticket_validate_func(ticket_obj, snow_client_obj, auth):
-
     '''
     "TicketParser" object parsing a "ticket_obj" object
     :param ticket_obj: ticket object
@@ -152,12 +188,12 @@ def ticket_validate_func(ticket_obj, snow_client_obj, auth):
 
 def BotFunc():
 
-    print("links & ID's of Non Proactive tickets & tickets that cannot be validated and require manual intervention will be saved to 'no_proactive.txt' and 'manual_tickets.txt' respectively\n")
-
-    if not path.exists(".ssh_info"):
-        print("\".ssh_info\" file not found. cannot validate tickets without it as it contains pod numbers mapped to it's respective IP's")
-        exit(1)
     instance, user, password = Login()
+    if not path.exists(".ssh_info") or not path.exists(".shadow_info"):
+        print("\".ssh_info\" file not found or \".shadow_info\". creating it")
+        router_login_file()
+
+    print("links & ID's of Non Proactive tickets & tickets that cannot be validated and require manual intervention will be saved to 'no_proactive.txt' and 'manual_tickets.txt' respectively\n")
 
     ### interfaces to assign to groups - reference
     # L2_UHD = 4, t1, digi-lte, lte
@@ -172,10 +208,12 @@ def BotFunc():
     snow_client = Client(instance=instance, user=user, password=password)
 
     snow_client.request_params["headers"] = headers
-    incident_table = snow_client.resource(api_path="/table/incident")   ## API calls should be made to objects in the incidents table
+    incident_table = snow_client.resource(api_path="/table/incident")   ## API calls made to objects in the incidents table
 
 
-    ### swapcase of first characters of the user name preceding & following the "." to be used as arg in the QueryBuilder object for filtering
+    '''
+    swapcase of first characters of the user name preceding & following the "." to be used as arg in the QueryBuilder object for filtering
+    '''
     user_fname_first_char = re.search("\w+\.", user).group()[0].swapcase()
     user_lname_first_char = re.search("\.\w+", user).group()[1].swapcase()
     filter_user = re.sub("^" + user_fname_first_char.swapcase(), user_fname_first_char, user)
@@ -187,9 +225,8 @@ def BotFunc():
             field("incident_state").equals([2])
 
     print("pulling all unvalidated 'work in progress' tickets from snow assigned to Rohan Philip")
-    '''
-    pulling all ticket objects from user's queue after passing the filters
-    '''
+
+    # pulling all ticket objects from user's queue after passing the filters
     ticket_obj_list = incident_table.get(query=query, stream=True).all()
     snow_client.close()
     print("\npulled all tickets from queue\n")
@@ -198,14 +235,10 @@ def BotFunc():
         ticket_link = f"https://connxaidev.service-now.com/incident.do?sys_id={i['sys_id']}"
         ticket_api_link = f"https://connxaidev.service-now.com/api/now/table/incident/{i['sys_id']}"
         try:
-            '''
-            snow ticket object referenced by ticket incident numer
-            '''
+            # snow ticket object referenced by ticket incident numer
             snow_client_obj = snow_client.query(table='incident', query={'number': i["number"]})
 
-            '''
-            ticket object validation function
-            '''
+            # ticket object validation function
             ticket_validate_func(ticket_obj=i, snow_client_obj=snow_client_obj, auth=(user, password))
         except ManualInterVentionError:
             print("ticket requires manual intervention")

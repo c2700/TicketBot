@@ -110,8 +110,9 @@ class TicketParser:
 
 
         ''' 
-            extracting respective "node name", "iface name" & "iface state" to "node_iface_state_dict" dictionary
-            extracting respective "node name" & "iface name" to "node_iface_dict" dictionary
+            extracting respective 
+                1) "node name", "iface name" & "iface state" to "node_iface_state_dict" dictionary
+                2) "node name" & "iface name" to "node_iface_dict" dictionary
         '''
         if self.iface_list.__len__() == 1 and self.node_list.__len__() == 1:
             _node_name = self.node_list[0]
@@ -143,6 +144,14 @@ class TicketParser:
                 for j in self.iface_list:
                     _iface_name = j
                     _node_name = i
+
+                    '''
+                    while looping through "node_list" & "iface_list" check the following
+                        1) if ("iface_name" is a NodeA iface and "node" is NodeA)
+                        2) if ("iface_name" is a NodeB iface and "node" is NodeB)
+                    to make a dictionary of node_name & it's respective iface_name & iface_state which will be used by
+                    an "SSHConn" instance
+                    '''
                     if ((_iface_name in _node_A_iface) and (re.search("P[1-6|9]A", _node_name))) or ((_iface_name in _node_B_iface) and (re.search("P[1-6|9]B", _node_name))):
                         _iface_state = self.iface_state_dict[_iface_name]
                         self.node_iface_dict[_node_name] += [_iface_name]
@@ -158,7 +167,7 @@ class TicketParser:
 
 
     '''
-    GETTERS TO GET respective values
+    getters section
     '''
 
     '''
