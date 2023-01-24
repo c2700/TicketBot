@@ -1,6 +1,7 @@
 # custom files
-.hash
 .idea
+.hash
+.shadow_info
 .ssh_info
 .validated.txt
 manual_tickets.txt
