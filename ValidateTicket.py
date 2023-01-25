@@ -284,7 +284,7 @@ class ValidateTicket:
         _updated_ticket_obj.close()
 
         if _updated_ticket_obj.status_code == 200:
-            with open("validated_tickets.txt", 'a') as validated_tickets_file:
+            with open(".validated_tickets.txt", 'a') as validated_tickets_file:
                 validated_tickets_file.write(f"{self.post_data['number']} - {self.ticket_link}\n")
 
 
