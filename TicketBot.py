@@ -10,7 +10,7 @@ import re
 def Login():
     if not path.exists(".hash"):
         print("no stored snow creds found. please input snow creds")
-        _instance = input("snow instance: ")
+        _instance = input("snow instance: ")  ## snow domain (test or prod env domain name)
         _user = input("user: ")
         _password = input("password: ")
 

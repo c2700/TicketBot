@@ -13,12 +13,18 @@ class TicketParser:
         pull necessary data from ticket object and generate necessary data structs
         :param post_data: ticket object
         '''
+        self.store_number = ""
+
         self.ticket_link = "https://connxaidev.service-now.com/incident.do?sys_id=" + post_data["sys_id"]
         self.post_data = post_data
         self.short_desc_list = self.post_data["short_description"].split(" || ")  ## splits short description into a list
-        ## get "store number" from extracted description. this is because the ticket object does not have the "u_store_number" key in existence at the moment
-        self.store_number = self.post_data["short_description"].split(" || ")[0].split()[-1]
-        # self.store_number = self.post_data["u_store_number"]  ## store number
+        
+        ## store number
+        if self.post_data["u_store_number"] != ""
+            self.store_number = self.post_data["u_store_number"]
+        elif self.post_data["u_store_number"] == ""
+            self.store_number = self.post_data["short_description"].split(" || ")[0].split()[-1]
+
         self.pod_num = re.sub("\s+", "", self.short_desc_list[1].replace("POD - ", ""))
 
         '''
