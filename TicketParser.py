@@ -20,9 +20,9 @@ class TicketParser:
         self.short_desc_list = self.post_data["short_description"].split(" || ")  ## splits short description into a list
         
         ## store number
-        if self.post_data["u_store_number"] != ""
+        if self.post_data["u_store_number"] != "":
             self.store_number = self.post_data["u_store_number"]
-        elif self.post_data["u_store_number"] == ""
+        elif self.post_data["u_store_number"] == "":
             self.store_number = self.post_data["short_description"].split(" || ")[0].split()[-1]
 
         self.pod_num = re.sub("\s+", "", self.short_desc_list[1].replace("POD - ", ""))

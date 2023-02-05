@@ -204,7 +204,6 @@ def BotFunc():
     '''
     headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
-    #
     snow_client = Client(instance=instance, user=user, password=password)
 
     snow_client.request_params["headers"] = headers
@@ -232,8 +231,8 @@ def BotFunc():
     print("\npulled all tickets from queue\n")
 
     for i in ticket_obj_list:
-        ticket_link = f"https://connxaidev.service-now.com/incident.do?sys_id={i['sys_id']}"
-        ticket_api_link = f"https://connxaidev.service-now.com/api/now/table/incident/{i['sys_id']}"
+        ticket_link = f"https://{instance}.service-now.com/incident.do?sys_id={i['sys_id']}"
+        ticket_api_link = f"https://{instance}.service-now.com/api/now/table/incident/{i['sys_id']}"
         try:
             # snow ticket object referenced by ticket incident numer
             snow_client_obj = snow_client.query(table='incident', query={'number': i["number"]})
