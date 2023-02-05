@@ -50,8 +50,10 @@ class ValidateTicket:
         self.iface_state_list = iface_state_list
         self.iface_list = list(iface_state_list.keys())
 
-        self.store_number = self.post_data["short_description"].split(" || ")[0].split()[-1]
-        # self.store_number = self.post_data["u_store_number"]
+        if self.post_data["u_store_number"] != "":
+            self.store_number = self.post_data["u_store_number"]
+        elif self.post_data["u_store_number"] == "":
+            self.store_number = self.post_data["short_description"].split(" || ")[0].split()[-1]
 
         self.wired_iface_list = [self.iface_list for i in self.iface_list if i in ["4", "t1"]]
         self.wireless_iface_list = [self.iface_list for i in self.iface_list if i in ["lte", "digi", "digi-lte"]]
