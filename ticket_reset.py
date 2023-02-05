@@ -59,16 +59,35 @@ def reset_tickets():
                 "assignment_group": "",
             }
 
+    def reset_ticket(sys_id):
+        inc_num = SnowSess.get(f"{_instance}.service-now.com/api/now/table/incident/{'sys_id'}")
+        print(f"resetting ticket {inc_num} - {sys_id}")
+        try:
+            SnowSess.patch(f"{_instance}.service-now.com/api/now/table/incident/{'sys_id'}", data=empty_post_data)
+        except Exception as e:
+            print(e)
+            with open(f"could not reset ticket {inc_num} - {sys_id}") as err_reset:
+                err_reset.write(sys_id)
+
     with open('test_ticket_ids') as test_tickets:
-        for i in test_tickets.readlines():
-            inc_num = SnowSess.get(f"{_instance}.service-now.com/api/now/table/incident/{'sys_id'}")
-            print(f"resetting ticket {inc_num} - {i}")
-            try:
-                SnowSess.patch(f"{_instance}.service-now.com/api/now/table/incident/{'sys_id'}", data=empty_post_data)
-            except Exception as e:
-                print(e)
-                with open(f"could not reset ticket {inc_num} - {i}") as err_reset:
-                    err_reset.write(i)
+        sys_id_line = test_tickets.readlines()
+
+        if len(sys_id_line) == 1:
+            sys_id_line = sys_id_line[0]
+
+            if re.search(" ", sys_id_line):
+                sys_id_line = sys_id_line.split(" ")
+            if re.search(",", sys_id_line):
+                sys_id_line = sys_id_line.split(",")
+
+            for i in sys_id_line:
+                reset_ticket(i)
+
+        elif len(sys_id_line) > 1:
+            for i in sys_id_line:
+                reset_ticket(i)
+
+
 
     SnowSess.close()
 
