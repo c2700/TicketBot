@@ -8,14 +8,14 @@ class ManualInterVentionError(Exception):
 
 
 class TicketParser:
-    def __init__(self, post_data):
+    def __init__(self, post_data, snow_instance):
         '''
         pull necessary data from ticket object and generate necessary data structs
         :param post_data: ticket object
         '''
         self.store_number = ""
 
-        self.ticket_link = "https://connxaidev.service-now.com/incident.do?sys_id=" + post_data["sys_id"]
+        self.ticket_link = f"https://{snow_instance}.service-now.com/incident.do?sys_id=" + post_data["sys_id"]
         self.post_data = post_data
         self.short_desc_list = self.post_data["short_description"].split(" || ")  ## splits short description into a list
         

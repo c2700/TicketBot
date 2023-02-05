@@ -12,7 +12,7 @@ class UnvalidatedTicketError(Exception):
 
 
 class ValidateTicket:
-    def __init__(self, post_data, dev_log, iface_state_list, snow_client_obj, auth):
+    def __init__(self, snow_instance, post_data, dev_log, iface_state_list, snow_client_obj, auth):
         '''
         Set Ticket Values based on parsed Device logs
         :param post_data: extracted ticket_object
@@ -27,6 +27,7 @@ class ValidateTicket:
         self.assign_grp_name = None
         self.snow_client_obj = snow_client_obj
         self.auth = auth
+        self.snow_instance = snow_instance
         # self.snow_req_session = requests.Session()
         # self.snow_req_session.auth = auth
 
@@ -75,7 +76,7 @@ class ValidateTicket:
         '''
 
         _ticket_number = self.post_data["number"]
-        self.ticket_link = f"https://connxaidev.service-now.com/incident.do?sys_id={self.post_data['sys_id']}"
+        self.ticket_link = f"https://{self.snow_instance}.service-now.com/incident.do?sys_id={self.post_data['sys_id']}"
 
         _dev_data = str.join("\n", self.dev_data)
         self.work_notes = f"Hi Team,\n\nstore #{self.store_number}\n\nPlease find the logs attached below:\n\n{_dev_data}\n\n"
@@ -255,7 +256,7 @@ class ValidateTicket:
         if (any(x in l2_uhd_assignment_ifaces for x in self.iface_list)) or \
                 (any(x in l2_uhd_assignment_ifaces for x in self.iface_list) and any(x in sdwan_ai_ops_assignment_ifaces for x in self.iface_list)):
             #### L2_UHD
-            # self.grp_link = "https://connxaidev.service-now.com/api/now/table/incident//sys_user_group/3eb16e621b5568905780baebcc4bcbe8"
+            # self.grp_link = f"https://{self.snow_instance}.service-now.com/api/now/table/incident//sys_user_group/3eb16e621b5568905780baebcc4bcbe8"
             self.updated_values["assignment_group"] = "L2_UHD"
         if any(x in sdwan_ai_ops_assignment_ifaces for x in self.iface_list):
             ## sdwan ai ops
@@ -280,7 +281,7 @@ class ValidateTicket:
     '''
     def UpdateTicketRecord(self):
         ## update ticket fields using patch call
-        ticket_link1 = f"https://connxaidev.service-now.com/api/now/table/incident/{self.post_data['sys_id']}"
+        ticket_link1 = f"https://{self.snow_instance}.service-now.com/api/now/table/incident/{self.post_data['sys_id']}"
         # _updated_ticket_obj = self.snow_req_session.patch(url=ticket_link1, data=json.dumps(self.updated_values))
         _updated_ticket_obj = requests.put(url=ticket_link1, data=json.dumps(self.updated_values), auth=self.auth)
         _updated_ticket_obj.close()

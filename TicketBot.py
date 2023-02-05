@@ -79,14 +79,14 @@ def router_login_file():
 
 
 
-def ticket_validate_func(ticket_obj, snow_client_obj, auth):
+def ticket_validate_func(snow_instance, ticket_obj, snow_client_obj, auth):
     '''
     "TicketParser" object parsing a "ticket_obj" object
     :param ticket_obj: ticket object
     :param snow_client_obj:
     :param auth: snow auth
     '''
-    parsed_ticket = TicketParser(ticket_obj)
+    parsed_ticket = TicketParser(ticket_obj, snow_instance)
 
     print(f"\nvalidating ticket {ticket_obj['number']}")
     print(parsed_ticket.get_short_desc)
@@ -171,7 +171,13 @@ def ticket_validate_func(ticket_obj, snow_client_obj, auth):
     ticket_action = TicketStateObj.get_ticket_action
     ticket_action_string = TicketStateObj.get_ticket_action_string[TicketStateObj.get_ticket_action]
     print(f"ticket_action => {ticket_action} - {ticket_action_string}\n")
-    ValidateTicketObj = ValidateTicket(post_data=ticket_obj, dev_log=dev_log_obj.get_parsed_device_log, iface_state_list=iface_state_list, snow_client_obj=snow_client_obj, auth=auth)
+
+    ValidateTicketObj = ValidateTicket(snow_instance=snow_instance,
+                                       post_data=ticket_obj,
+                                       dev_log=dev_log_obj.get_parsed_device_log,
+                                       iface_state_list=iface_state_list,
+                                       snow_client_obj=snow_client_obj,
+                                       auth=auth)
 
     '''
     set/change ticket object keys to it's respective values
@@ -238,7 +244,7 @@ def BotFunc():
             snow_client_obj = snow_client.query(table='incident', query={'number': i["number"]})
 
             # ticket object validation function
-            ticket_validate_func(ticket_obj=i, snow_client_obj=snow_client_obj, auth=(user, password))
+            ticket_validate_func(snow_instance=instance, ticket_obj=i, snow_client_obj=snow_client_obj, auth=(user, password))
         except ManualInterVentionError:
             print("ticket requires manual intervention")
             with open("manual_tickets.txt", "a") as manual_ticket:
