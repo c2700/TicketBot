@@ -256,7 +256,6 @@ class ValidateTicket:
         if (any(x in l2_uhd_assignment_ifaces for x in self.iface_list)) or \
                 (any(x in l2_uhd_assignment_ifaces for x in self.iface_list) and any(x in sdwan_ai_ops_assignment_ifaces for x in self.iface_list)):
             #### L2_UHD
-            # self.grp_link = f"https://{self.snow_instance}.service-now.com/api/now/table/incident//sys_user_group/3eb16e621b5568905780baebcc4bcbe8"
             self.updated_values["assignment_group"] = "L2_UHD"
         if any(x in sdwan_ai_ops_assignment_ifaces for x in self.iface_list):
             ## sdwan ai ops

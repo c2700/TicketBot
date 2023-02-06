@@ -1,0 +1,115 @@
+{
+  "result": [
+    {
+      "short_description": "Store - 4283 || POD - 9 || [\"AAPCA4283P9A\",\"AAPCA4283P9B\"] || [\"Intf 3 (3) operationally down\",\"Intf 4 (4) operationally down\",\"Intf digi-lte (6) operationally down\",\"Intf t1 (6) operationally down\"]",
+      "cmdb_ci":  "AAPCA4283P9A",
+      "u_store_number_ci": "4283",
+      "u_store_state": "",
+      "description": "",
+      "company": "AAP PaloAlto",
+      "state": "2",
+      "priority": "3",
+      "assigned_to": "Rohan Philip"
+    },
+    {
+      "short_description": "Store - 1278 || POD - 5 || AAPNY1278P5B || Intf 4 (8) operationally down",
+      "cmdb_ci":  "AAPNY1278P5B",
+      "u_store_number_ci": "1278",
+      "u_store_state": "",
+      "description": "Store - 1278 || POD - 5|| AAPNY1278P5B || Intf 4 (8) operationally down",
+      "company": "Advance Auto Parts",
+      "state": "2",
+      "priority": "3",
+      "assigned_to": "Rohan Philip"
+    },
+    {
+      "short_description": "Store - 1278 || POD - 1 || AAPNY1278P5B || Intf 4 (8) operationally down",
+      "cmdb_ci":  "AAPNY1278P5B",
+      "u_store_number_ci": "1278",
+      "u_store_state": "",
+      "description": "What devices or applications are Impacted? : \r\n---------------------------------------------------------------------------------------------------------\r\nIs the issue affecting reputation or revenue of the company? : \r\nAny recent changes that could be contributing, are there any workarounds ? : \r\nAdditional Notes : Store - 1278 || POD - 1 || AAPNY1278P5B || Intf 4 (8) operationally down\r\n---------------------------------------------------------------------------------------------------------",
+      "company": "Advance Auto Parts",
+      "state": "2",
+      "priority": "3",
+      "assigned_to": "Rohan Philip"
+    },
+    {
+      "short_description": "Store - 4283 || POD - 9 || [\"AAPCA4283P9A\",\"AAPCA4283P9B\"] || [\"Intf 3 (3) operationally down\",\"Intf 4 (4) operationally down\",\"Intf digi-lte (6) operationally down\",\"Intf t1 (6) operationally down\"]",
+      "cmdb_ci":  "AAPCA4283P9A",
+      "u_store_number_ci": "4283",
+      "u_store_state": "",
+      "description": "",
+      "company": "AAP PaloAlto",
+      "state": "2",
+      "priority": "3",
+      "assigned_to": "Rohan Philip"
+    },
+    {
+      "short_description": "Store - 9325 ||  POD - [\"5\",\"P5\"] || AAPFL9325P5B   || Intf t1 (5) operationally down ",
+      "cmdb_ci":  "AAPFL9325P5A",
+      "u_store_number_ci": "9325",
+      "u_store_state": "",
+      "description": "---------------------------------------------------------------------------------------------------------\r\nWhat devices or applications are Impacted? : \r\nIs the issue affecting reputation or revenue of the company? : \r\nAny recent changes that could be contributing, are there any workarounds ? : \r\nAdditional Notes : Store - 9325 ||  POD - [\"5\",\"P5\"] || AAPFL9325P5B   || Intf t1 (5) operationally down \r\n---------------------------------------------------------------------------------------------------------",
+      "company": "Advance Auto Parts",
+      "state": "2",
+      "priority": "3",
+      "assigned_to": "Rohan Philip"
+    },
+    {
+      "short_description": "Store - 6262 ||  POD - [\"P2\",\"2\"] || AAPTN6262P2B   || Intf t1 (5) operationally down ",
+      "cmdb_ci":  "AAPTN6262P2A",
+      "u_store_number_ci": "6262",
+      "u_store_state": "",
+      "description": "---------------------------------------------------------------------------------------------------------\r\nWhat devices or applications are Impacted? : \r\nIs the issue affecting reputation or revenue of the company? : \r\nAny recent changes that could be contributing, are there any workarounds ? : \r\nAdditional Notes : Store - 6262 ||  POD - [\"P2\",\"2\"] || AAPTN6262P2B   || Intf t1 (5) operationally down \r\n---------------------------------------------------------------------------------------------------------",
+      "company": "Advance Auto Parts",
+      "state": "2",
+      "priority": "3",
+      "assigned_to": "Rohan Philip"
+    },
+    {
+      "short_description": "Store - 7793 || POD - 1 || AAPNJ7793P1B || Intf pa-2 (8) operationally down",
+      "cmdb_ci":  "AAPNJ7793P1A",
+      "u_store_number_ci": "7793",
+      "u_store_state": "TX",
+      "description": "",
+      "company": "AAP PaloAlto",
+      "state": "2",
+      "priority": "3",
+      "assigned_to": "Rohan Philip"
+    },
+    {
+      "short_description": "Store - 4125 ||  POD - 1 || AAPNC4125P1B   || Intf pa-2 (8) operationally down",
+      "cmdb_ci":  "AAPNC4125P1A",
+      "u_store_number_ci": "4125",
+      "u_store_state": "",
+      "description": "---------------------------------------------------------------------------------------------------------\r\nWhat devices or applications are Impacted? : \r\nIs the issue affecting reputation or revenue of the company? : \r\nAny recent changes that could be contributing, are there any workarounds ? : \r\nAdditional Notes : Store - 4125 ||  POD - 1 || AAPNC4125P1B   || Intf pa-2 (8) operationally down \r\n---------------------------------------------------------------------------------------------------------",
+      "company": "AAP PaloAlto",
+      "state": "2",
+      "priority": "3",
+      "assigned_to": "Rohan Philip"
+    },
+    {
+      "short_description": "Store - 6701 ||  POD - 6 || AAPKY6701P6B   || Node AAPKY6701P6B went offline ",
+      "cmdb_ci":  "AAPKY6701P6A",
+      "u_store_number_ci": "6071",
+      "u_store_state": "",
+      "description": "---------------------------------------------------------------------------------------------------------\r\nWhat devices or applications are Impacted? : \r\nIs the issue affecting reputation or revenue of the company? : \r\nAny recent changes that could be contributing, are there any workarounds ? : \r\nAdditional Notes : Store - 6701 ||  POD - 6 || AAPKY6701P6B   || Node AAPKY6701P6B went offline \r\n---------------------------------------------------------------------------------------------------------",
+      "company": "Advance Auto Parts",
+      "state": "2",
+      "priority": "3",
+      "assigned_to": "Rohan Philip"
+    },
+    {
+      "short_description": "Store - 4283 || POD - 9 || [\"AAPCA4283P9A\",\"AAPCA4283P9B\"] || [\"Intf 3 (3) operationally down\",\"Intf 4 (4) operationally down\",\"Intf digi-lte (6) operationally down\",\"Intf t1 (6) operationally down\"]",
+      "cmdb_ci":  "AAPCA4283P9A",
+      "u_store_number_ci": "4283",
+      "u_store_state": "",
+      "description": "",
+      "company": "Advance Auto Parts",
+      "state": "2",
+      "priority": "3",
+      "assigned_to": "Rohan Philip"
+    }
+  ]
+}
+
