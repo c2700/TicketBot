@@ -235,36 +235,19 @@ def BotFunc():
     ticket_obj_list = incident_table.get(query=query, stream=True).all()
     ticket_obj_list_temp = ticket_obj_list
 
-    with open("manual_tickets.txt", "r") as manual_tickets_check:
-        _ = manual_tickets_check.readlines()
-        if len(_) == 1:
-            _ = _[0].split("\n")
-            _ = re.sub("-.*\n", "\n", *_).split("\n")
-            # _ = re.sub("-.*\n", " ", *_).split(" ")
-
-        for i in ticket_obj_list_temp:
-            if f"{i['number']}" in _:
-                _ticket_obj_index = ticket_obj_list.index(i)
-                del ticket_obj_list[_ticket_obj_index]
-
-        if ticket_obj_list == [] and _ != []:
-            print(*_)
-    return None
-
-
-    # snow_client.close()
-    # print("\npulled all tickets from queue\n")
-    #
-    # for i in ticket_obj_list:
-    #     ticket_link = f"https://{instance}.service-now.com/incident.do?sys_id={i['sys_id']}"
-    #     ticket_api_link = f"https://{instance}.service-now.com/api/now/table/incident/{i['sys_id']}"
-    #     try:
-    #         # snow ticket object referenced by ticket incident numer
-    #         snow_client_obj = snow_client.query(table='incident', query={'number': i["number"]})
-    #
-    #         # ticket object validation function
-    #         ticket_validate_func(snow_instance=instance, ticket_obj=i, snow_client_obj=snow_client_obj, auth=(user, password))
-    #     except ManualInterVentionError:
-    #         print("ticket requires manual intervention")
-    #         with open("manual_tickets.txt", "a") as manual_ticket:
-    #             manual_ticket.write(f"{i['number']} - {ticket_link}\n")
+    snow_client.close()
+    print("\npulled all tickets from queue\n")
+    
+    for i in ticket_obj_list:
+        ticket_link = f"https://{instance}.service-now.com/incident.do?sys_id={i['sys_id']}"
+        ticket_api_link = f"https://{instance}.service-now.com/api/now/table/incident/{i['sys_id']}"
+        try:
+            # snow ticket object referenced by ticket incident numer
+            snow_client_obj = snow_client.query(table='incident', query={'number': i["number"]})
+    
+            # ticket object validation function
+            ticket_validate_func(snow_instance=instance, ticket_obj=i, snow_client_obj=snow_client_obj, auth=(user, password))
+        except ManualInterVentionError:
+            print("ticket requires manual intervention")
+            with open("manual_tickets.txt", "a") as manual_ticket:
+                manual_ticket.write(f"{i['number']} - {ticket_link}\n")
