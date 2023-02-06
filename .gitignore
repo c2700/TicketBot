@@ -6,7 +6,7 @@
 .validated.txt
 manual_tickets.txt
 reactive.txt
-
+#changes added
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
