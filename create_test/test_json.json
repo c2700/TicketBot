@@ -9,7 +9,7 @@
       "company": "AAP PaloAlto",
       "state": "2",
       "priority": "3",
-      "assigned_to": "Rohan Philip"
+      "assigned_to": ""
     },
     {
       "short_description": "Store - 1278 || POD - 5 || AAPNY1278P5B || Intf 4 (8) operationally down",
@@ -20,7 +20,7 @@
       "company": "Advance Auto Parts",
       "state": "2",
       "priority": "3",
-      "assigned_to": "Rohan Philip"
+      "assigned_to": ""
     },
     {
       "short_description": "Store - 1278 || POD - 1 || AAPNY1278P5B || Intf 4 (8) operationally down",
@@ -31,7 +31,7 @@
       "company": "Advance Auto Parts",
       "state": "2",
       "priority": "3",
-      "assigned_to": "Rohan Philip"
+      "assigned_to": ""
     },
     {
       "short_description": "Store - 4283 || POD - 9 || [\"AAPCA4283P9A\",\"AAPCA4283P9B\"] || [\"Intf 3 (3) operationally down\",\"Intf 4 (4) operationally down\",\"Intf digi-lte (6) operationally down\",\"Intf t1 (6) operationally down\"]",
@@ -42,7 +42,7 @@
       "company": "AAP PaloAlto",
       "state": "2",
       "priority": "3",
-      "assigned_to": "Rohan Philip"
+      "assigned_to": ""
     },
     {
       "short_description": "Store - 9325 ||  POD - [\"5\",\"P5\"] || AAPFL9325P5B   || Intf t1 (5) operationally down ",
@@ -53,7 +53,7 @@
       "company": "Advance Auto Parts",
       "state": "2",
       "priority": "3",
-      "assigned_to": "Rohan Philip"
+      "assigned_to": ""
     },
     {
       "short_description": "Store - 6262 ||  POD - [\"P2\",\"2\"] || AAPTN6262P2B   || Intf t1 (5) operationally down ",
@@ -64,7 +64,7 @@
       "company": "Advance Auto Parts",
       "state": "2",
       "priority": "3",
-      "assigned_to": "Rohan Philip"
+      "assigned_to": ""
     },
     {
       "short_description": "Store - 7793 || POD - 1 || AAPNJ7793P1B || Intf pa-2 (8) operationally down",
@@ -75,7 +75,7 @@
       "company": "AAP PaloAlto",
       "state": "2",
       "priority": "3",
-      "assigned_to": "Rohan Philip"
+      "assigned_to": ""
     },
     {
       "short_description": "Store - 4125 ||  POD - 1 || AAPNC4125P1B   || Intf pa-2 (8) operationally down",
@@ -86,7 +86,7 @@
       "company": "AAP PaloAlto",
       "state": "2",
       "priority": "3",
-      "assigned_to": "Rohan Philip"
+      "assigned_to": ""
     },
     {
       "short_description": "Store - 6701 ||  POD - 6 || AAPKY6701P6B   || Node AAPKY6701P6B went offline ",
@@ -97,7 +97,7 @@
       "company": "Advance Auto Parts",
       "state": "2",
       "priority": "3",
-      "assigned_to": "Rohan Philip"
+      "assigned_to": ""
     },
     {
       "short_description": "Store - 4283 || POD - 9 || [\"AAPCA4283P9A\",\"AAPCA4283P9B\"] || [\"Intf 3 (3) operationally down\",\"Intf 4 (4) operationally down\",\"Intf digi-lte (6) operationally down\",\"Intf t1 (6) operationally down\"]",
@@ -108,7 +108,7 @@
       "company": "Advance Auto Parts",
       "state": "2",
       "priority": "3",
-      "assigned_to": "Rohan Philip"
+      "assigned_to": ""
     }
   ]
 }

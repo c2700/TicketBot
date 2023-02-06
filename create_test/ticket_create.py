@@ -1,7 +1,7 @@
 import requests
 import json
 
-auth=("rohan.philip", "! Br3@k $uff")
+auth=("", "")
 
 with open('test_json.json', 'r') as _test_json_f:
     _ = json.load(fp=_test_json_f)
