@@ -1,7 +1,10 @@
 import requests
 import json
 
-auth=("", "")
+with open("../.hash") as _hash_var:
+    _ = json.load(fp=_hash_var)
+    auth = (_["user"], _["hashword"])
+
 
 with open('test_json.json', 'r') as _test_json_f:
     _ = json.load(fp=_test_json_f)
