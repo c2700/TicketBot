@@ -85,14 +85,14 @@ class SSHConn:
 
 
         self.pod_ip_dict = {}
-        with open(".ssh_info", 'r') as f_obj:
+        with open(".ssh_info", "r") as f_obj:
             self.pod_ip_dict = json.load(fp=f_obj)
 
-        with open(".shadow_info", 'r') as f_obj:
+        with open(".shadow_info", "r") as f_obj:
             _ = json.load(fp=f_obj)
             self.passwd = _["red store"]
             if self.pod_num == "9":
-                self.passwd = _(fp=f_obj)["blue store"]
+                self.passwd = _["blue store"]
 
 
         self.sshclient = SSHClient()

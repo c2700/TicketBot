@@ -18,7 +18,7 @@ def Login():
         _hash_dict = {
             "instance": _instance,
             "user": _user,
-            "password": _password
+            "hashword": _password
         }
 
         with open(".hash", 'w') as _f_obj:
@@ -30,7 +30,7 @@ def Login():
             _json_obj = json.load(fp=_f_obj)
             _instance = _json_obj["instance"]
             _user = _json_obj["user"]
-            _password = _json_obj["password"]
+            _password = _json_obj["hashword"]
 
     return _instance, _user, _password
 
