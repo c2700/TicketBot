@@ -1,3 +1,4 @@
+import requests
 from pysnow import Client, QueryBuilder
 from LogParser import *
 from TicketParser import *
@@ -79,12 +80,15 @@ def router_login_file():
 
 
 
-def ticket_validate_func(snow_instance, ticket_obj, snow_client_obj, auth):
+# def ticket_validate_func(snow_instance, ticket_obj, snow_client_obj, auth):
+# def ticket_validate_func(snow_instance, ticket_obj, snow_session_obj, auth):
+def ticket_validate_func(snow_instance, ticket_obj, snow_session_obj):
     '''
     "TicketParser" object parsing a "ticket_obj" object
     :param ticket_obj: ticket object
-    :param snow_client_obj:
-    :param auth: snow auth
+    :param snow_session_obj:
+    # :param snow_client_obj:
+    # :param auth: snow auth
     '''
     parsed_ticket = TicketParser(ticket_obj, snow_instance)
 
@@ -144,7 +148,7 @@ def ticket_validate_func(snow_instance, ticket_obj, snow_client_obj, auth):
     '''
     function needs to be called (It's here just in case anyone wants to call it). 
     It's to show peer logs & peers in specified in the logs
-    call: show_peers_state_count("down peers", len(LogParserObj.get_down_iface_list))
+    call: show_peers_state_count("down peers", len(down_iface_list))
     '''
     def show_peers_state_count(text, peer_count):
         if peer_count > 0:
@@ -176,8 +180,9 @@ def ticket_validate_func(snow_instance, ticket_obj, snow_client_obj, auth):
                                        post_data=ticket_obj,
                                        dev_log=dev_log_obj.get_parsed_device_log,
                                        iface_state_list=iface_state_list,
-                                       snow_client_obj=snow_client_obj,
-                                       auth=auth)
+                                       snow_session_obj=snow_session_obj)
+                                       # snow_client_obj=snow_client_obj,
+                                       # auth=auth)
 
     '''
     set/change ticket object keys to it's respective values
@@ -237,17 +242,22 @@ def BotFunc():
 
     snow_client.close()
     print("\npulled all tickets from queue\n")
-    
+
+    snow_req_session = requests.Session()
+    snow_req_session.auth = (user, password)
+
     for i in ticket_obj_list:
         ticket_link = f"https://{instance}.service-now.com/incident.do?sys_id={i['sys_id']}"
-        ticket_api_link = f"https://{instance}.service-now.com/api/now/table/incident/{i['sys_id']}"
+        ticket_uri = f"https://{instance}.service-now.com/api/now/table/incident/{i['sys_id']}"
         try:
-            # snow ticket object referenced by ticket incident numer
-            snow_client_obj = snow_client.query(table='incident', query={'number': i["number"]})
-    
+            # snow ticket object referenced by ticket incident number
+            # snow_client_obj = snow_client.query(table='incident', query={'number': i["number"]})
             # ticket object validation function
-            ticket_validate_func(snow_instance=instance, ticket_obj=i, snow_client_obj=snow_client_obj, auth=(user, password))
+            # ticket_validate_func(snow_instance=instance, ticket_obj=i, snow_client_obj=snow_client_obj, auth=(user, password))
+            # ticket_validate_func(snow_instance=instance, ticket_obj=i, snow_session_obj=snow_session, auth=(user, password))
+            ticket_validate_func(snow_instance=instance, ticket_obj=i, snow_session_obj=snow_req_session)
         except ManualInterVentionError:
             print("ticket requires manual intervention")
             with open("manual_tickets.txt", "a") as manual_ticket:
                 manual_ticket.write(f"{i['number']} - {ticket_link}\n")
+    snow_req_session.close()

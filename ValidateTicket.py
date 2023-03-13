@@ -12,24 +12,25 @@ class UnvalidatedTicketError(Exception):
 
 
 class ValidateTicket:
-    def __init__(self, snow_instance, post_data, dev_log, iface_state_list, snow_client_obj, auth):
+    # def __init__(self, snow_instance, post_data, dev_log, iface_state_list, snow_client_obj, auth):
+    def __init__(self, snow_instance, post_data, dev_log, iface_state_list, snow_session_obj):
         '''
         Set Ticket Values based on parsed Device logs
         :param post_data: extracted ticket_object
         :param dev_log: parsed device log
         :param iface_state_list: dict of ticket_iface-ticket_state -> eg:  {"ticket_iface_name": "ticket_state"}
-        :param snow_client_obj: the snow client session object created by the PySnow.Client instance
-        :param auth: snow user auth
+        :param snow_session_obj: requests.Session object that created session with snow
+        # :param snow_client_obj: the snow client session object created by the PySnow.Client instance
+        # :param auth: snow user auth
         '''
 
         self.grp_link = None
         self.grp_sys_id_value = None
         self.assign_grp_name = None
-        self.snow_client_obj = snow_client_obj
-        self.auth = auth
+        self.snow_session_obj = snow_session_obj
         self.snow_instance = snow_instance
-        # self.snow_req_session = requests.Session()
-        # self.snow_req_session.auth = auth
+        # self.snow_client_obj = snow_client_obj
+        # self.auth = auth
 
         self.iface_dict = {
             "mpls-t1": "t1",
@@ -280,10 +281,10 @@ class ValidateTicket:
     '''
     def UpdateTicketRecord(self):
         ## update ticket fields using patch call
-        ticket_link1 = f"https://{self.snow_instance}.service-now.com/api/now/table/incident/{self.post_data['sys_id']}"
-        # _updated_ticket_obj = self.snow_req_session.patch(url=ticket_link1, data=json.dumps(self.updated_values))
-        _updated_ticket_obj = requests.put(url=ticket_link1, data=json.dumps(self.updated_values), auth=self.auth)
-        _updated_ticket_obj.close()
+        _ticket_uri = f"https://{self.snow_instance}.service-now.com/api/now/table/incident/{self.post_data['sys_id']}"
+        _updated_ticket_obj = self.snow_session_obj.patch(url=_ticket_uri, data=json.dumps(self.updated_values))
+        # _updated_ticket_obj = requests.patch(url=ticket_uri, data=json.dumps(self.updated_values), auth=self.auth)
+        # _updated_ticket_obj.close()
 
         if _updated_ticket_obj.status_code == 200:
             with open(".validated_tickets.txt", 'a') as validated_tickets_file:
