@@ -10,7 +10,7 @@ class ManualInterVentionError(Exception):
 class TicketParser:
     def __init__(self, post_data, snow_instance):
         '''
-        pull necessary data from ticket object and generate necessary data structs
+        pWull necessary data from ticket object and generate necessary data structs
         :param post_data: ticket object
         '''
         self.store_number = ""
