@@ -243,7 +243,6 @@ def BotFunc():
     filter_user = re.sub("\." + user_lname_first_char.swapcase(), "." + user_lname_first_char, filter_user)
 
     # query = QueryBuilder().field("sys_created_by").contains("moogint").AND().\
-                           # field("assigned_to").equals(user).AND().\
     query = QueryBuilder().field("sys_created_by").equals(filter_user).AND().\
                            field("assigned").equals(re.sub("\.", " ", filter_user)).AND().\
                            field("short_description").contains("operationally down").AND().\
