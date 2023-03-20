@@ -15,7 +15,7 @@ def get_number(instance, user, hashword):
     filter_user = re.sub("\." + user_lname_first_char.swapcase(), " " + user_lname_first_char, user)
     _ = requests.get(f"https://{instance}.service-now.com/api/now/table/sys_user", auth=(user, hashword), params={"name": filter_user}).json()["result"][0]
     _ret = _["sys_id"]
-    input("not nice")
+    print("created creds file")
     return _ret
 
 
@@ -32,6 +32,7 @@ def Login():
             "hashword": _hashword,
             "number": get_number(_instance, _user, _hashword)
         }
+        _number = _hash_dict["number"]
 
         with open(".hash", 'w') as _f_obj:
             json_dict = json.loads(json.dumps(_hash_dict))
